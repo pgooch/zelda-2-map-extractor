@@ -9,7 +9,33 @@
 	<h1>Zelda II: The Map Extractor</h1>
 
 	<fieldset>
-		<label for="file">Select a Zelda II Rom </label> 
+	    <ul style="list-style-type:none;">
+	        <li>
+			<label for="legacy">Legacy Mode</label>
+			<input type="checkbox" id="legacy" value="legacy"/><br/>
+			</li>
+			<span id="modern">
+			    <p>Select which maps are vanilla. If you don't know, leave them unchecked. If the bottom of a map is filled with garbage tiles, try to check its checkbox here and try again.</p>
+				<li>
+				<label for="vanillawest">Vanilla West</label>
+				<input type="checkbox" id="vanillawest" value="vanillawest"/><br/>
+				</li>
+				<li>
+				<label for="vanillawest">Vanilla East</label>
+				<input type="checkbox" id="vanillaeast" value="vanillaeast"/><br/>
+				</li>
+				<li>
+				<label for="vanillawest">Vanilla Death Mountain</label>
+				<input type="checkbox" id="vanilladm" value="vanilladm"/><br/>
+				</li>
+				<li>
+				<label for="vanillawest">Vanilla Maze Island</label>
+				<input type="checkbox" id="vanillamaze" value="vanillamaze"/><br/>
+				</li>
+				<p>The bottom of generated maps may be padded with lots of mountain tiles. This is just the way the randomizer generates maps.</p>
+			</span>
+		</ul>
+		<label for="file">Select a Zelda II Rom</label> 
 		<input type="file" id="file" name="file" />
 	</fieldset>
 	

@@ -1,11 +1,26 @@
 // First part we load the file into the following array as just a big ol' bunch of HEX then call checkROM
 var rawHex = []
 var filename = '';
+var vanillaWest = false;
+var vanillaEast = false;
+var vanillaDM = false;
+var vanillaMaze = false;
+var legacy = false;
+
+$('#legacy').on('change',function(e){
+    $("#modern").css('display', $(this).prop('checked') ? 'none' : 'inherit');
+});
+
 $('#file').on('change',function(e){
 	rawHex = [];
 	sprites = []; // CLear it out so we can easily re-change ROMs
 	startAt = -1; // Needs to be reset, since the PRG length enevitable changes
 	$('#output-container').html('<h3>Loading ROM...</h3>');
+	vanillaWest = $("#vanillawest").prop('checked');
+	vanillaEast = $("#vanillaeast").prop('checked');
+	vanillaDM = $("#vanilladm").prop('checked');
+	vanillaMaze = $("#vanillamaze").prop('checked');
+	legacy = $("#legacy").prop('checked');
 	var fileRead = new FileReader();
 	filename = e.target.files[0].name;
 	fileRead.onload = function(file){
@@ -68,14 +83,23 @@ function getMap(){
 
 	// Map Data starts at the following location
 	maps = [
-		{	id: 'west-hyrule',		name: 'West Hyrule',	start: '506C',	end: '538C',	data:[]	},
-		{	id: 'east-hyrule',		name: 'East Hyrule',	start: '9056',	end: '936F',	data:[]	},
-		{	id: 'death-mountain',	name: 'Death Mountain',	start: '665C',	end: '6942',	data:[]	},
-		{	id: 'maze-island',		name: 'Maze Island',	start: 'A65C',	end: 'A942',	data:[]	},
+		{	id: 'west-hyrule',		name: 'West Hyrule',	legacyStart: '506C',    start: '7480',    vanillaSize: '0320',	vanilla: vanillaWest,	data:[]	},
+		{	id: 'east-hyrule',		name: 'East Hyrule',	legacyStart: '9056',    start: 'B480',    vanillaSize: '0319',	vanilla: vanillaEast,	data:[]	},
+		{	id: 'death-mountain',	name: 'Death Mountain',	legacyStart: '665C',    start: '7A00',    vanillaSize: '02E6',	vanilla: vanillaDM,		data:[]	},
+		{	id: 'maze-island',		name: 'Maze Island',	legacyStart: 'A65C',    start: 'BA00',    vanillaSize: '02E6',	vanilla: vanillaMaze,	data:[]	},
 	];
-	maps.forEach((mapObj,mapObjId)=>{
-		maps[mapObjId].start = parseInt(maps[mapObjId].start,16)
-		maps[mapObjId].end = parseInt(maps[mapObjId].end,16)
+	maps.forEach(mapObj=>{
+		if (legacy) {
+		    mapObj.start = parseInt(mapObj.legacyStart, 16);
+		    mapObj.end = mapObj.start + parseInt(mapObj.vanillaSize, 16);
+		    mapObj.vanilla = true;
+		} else {
+		    mapObj.start = parseInt(mapObj.start, 16);
+		    if (mapObj.vanilla)
+		        mapObj.end = mapObj.start + parseInt(mapObj.vanillaSize, 16);
+		    else
+		        mapObj.end = mapObj.start + 1408;
+		}
 	});
 
 	// Clear out the map area
@@ -95,11 +119,11 @@ function getMap(){
 			}
 		}
 
-		// Pad out the rest of the map data with extra water tiles
+		// Pad out the rest of the map data with extra tiles
 		var missing = 64-(mapObj.data.length%64)
-		console.log(mapObj.name+' map data is not sqare, filling with '+missing+' water tiles.')
+		console.log(mapObj.name+' map data is not sqare, filling with '+missing+' tiles.')
 		while(missing >0){
-			mapObj.data.push('c')
+			mapObj.data.push(mapObj.vanilla ? 'c' : 'b')
 			missing --
 		}
 
